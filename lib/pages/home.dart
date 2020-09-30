@@ -9,13 +9,14 @@ import 'package:list_it_social/pages/create_account.dart';
 import 'package:list_it_social/pages/profile.dart';
 import 'package:list_it_social/pages/search.dart';
 import 'package:list_it_social/pages/upload.dart';
-
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final StorageReference storageRef = FirebaseStorage.instance.ref();
 final usersRef = FirebaseFirestore.instance.collection('users');
 final postsRef = FirebaseFirestore.instance.collection('posts');
 final commentsRef = FirebaseFirestore.instance.collection('comments');
 final activityFeedRef = FirebaseFirestore.instance.collection('feed');
+final followersRef = FirebaseFirestore.instance.collection('followers');
+final followingRef = FirebaseFirestore.instance.collection('following');
 final DateTime timestamp = DateTime.now();
 User currentUser;
 
@@ -175,7 +176,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'FlutterShare',
+              'List-it Social',
               style: TextStyle(
                 fontFamily: "Signatra",
                 fontSize: 90.0,

@@ -24,7 +24,9 @@ class _ActivityFeedState extends State<ActivityFeed> {
     List<ActivityFeedItem> feedItems = [];
     snapshot.docs.forEach((doc) {
       feedItems.add(ActivityFeedItem.fromDocument(doc));
-      // print('Activity Feed Item: ${doc.data}');
+      //print('Activity Feed Item: ${doc.data}');
+
+
     });
     return feedItems;
   }
@@ -32,7 +34,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange,
+      backgroundColor: Colors.white38,
       appBar: header(context, titleText: "Activity Feed"),
       body: Container(
           child: FutureBuilder(

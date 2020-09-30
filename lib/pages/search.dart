@@ -70,7 +70,7 @@ class _SearchState extends State<Search> {
                 color: Colors.white,
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.w600,
-                fontSize: 60.0,
+                fontSize: 50.0,
               ),
             ),
           ],
