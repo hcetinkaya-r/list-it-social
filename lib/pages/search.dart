@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:list_it_social/models/user.dart';
+import 'package:list_it_social/pages/activity_feed.dart';
 import 'package:list_it_social/pages/home.dart';
 import 'package:list_it_social/widgets/progress.dart';
+
 
 class Search extends StatefulWidget {
   @override
@@ -17,9 +18,9 @@ class _SearchState extends State<Search> {
   Future<QuerySnapshot> searchResultsFuture;
 
   handleSearch(String query) {
-    Future<QuerySnapshot> users =
-        usersRef.where("displayName", isGreaterThanOrEqualTo: query).get();
-
+    Future<QuerySnapshot> users = usersRef
+        .where("displayName", isGreaterThanOrEqualTo: query)
+        .get();
     setState(() {
       searchResultsFuture = users;
     });
@@ -39,7 +40,7 @@ class _SearchState extends State<Search> {
           filled: true,
           prefixIcon: Icon(
             Icons.account_box,
-            size: 28,
+            size: 28.0,
           ),
           suffixIcon: IconButton(
             icon: Icon(Icons.clear),
@@ -51,7 +52,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  buildNoContent(BuildContext context) {
+  Container buildNoContent() {
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Container(
       child: Center(
@@ -60,16 +61,17 @@ class _SearchState extends State<Search> {
           children: <Widget>[
             SvgPicture.asset(
               'assets/images/search.svg',
-              height: orientation == Orientation.portrait ? 300 : 200,
+              height: orientation == Orientation.portrait ? 300.0 : 200.0,
             ),
             Text(
               "Find Users",
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 40,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w600),
+                color: Colors.white,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w600,
+                fontSize: 60.0,
+              ),
             ),
           ],
         ),
@@ -85,10 +87,9 @@ class _SearchState extends State<Search> {
           return circularProgress();
         }
         List<UserResult> searchResults = [];
-        snapshot.data.docs.forEach((doc) {
+        snapshot.data.documents.forEach((doc) {
           User user = User.fromDocument(doc);
           UserResult searchResult = UserResult(user);
-
           searchResults.add(searchResult);
         });
         return ListView(
@@ -101,12 +102,10 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
       appBar: buildSearchField(),
-      body: searchResultsFuture == null
-          ? buildNoContent(context)
-          : buildSearchResults(),
+      body:
+          searchResultsFuture == null ? buildNoContent() : buildSearchResults(),
     );
   }
 }
@@ -114,7 +113,7 @@ class _SearchState extends State<Search> {
 class UserResult extends StatelessWidget {
   final User user;
 
-  const UserResult(this.user);
+  UserResult(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +122,7 @@ class UserResult extends StatelessWidget {
       child: Column(
         children: <Widget>[
           GestureDetector(
-            onTap: () => print("tapped"),
+            onTap: () => showProfile(context, profileId: user.id),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: Colors.grey,
@@ -141,7 +140,7 @@ class UserResult extends StatelessWidget {
             ),
           ),
           Divider(
-            height: 2,
+            height: 2.0,
             color: Colors.white54,
           ),
         ],

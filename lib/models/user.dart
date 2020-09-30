@@ -8,22 +8,25 @@ class User {
   final String displayName;
   final String bio;
 
-  User(
-      {this.id,
-      this.username,
-      this.email,
-      this.photoUrl,
-      this.displayName,
-      this.bio});
+  User({
+    this.id,
+    this.username,
+    this.email,
+    this.photoUrl,
+    this.displayName,
+    this.bio,
+  });
 
   factory User.fromDocument(DocumentSnapshot doc) {
     return User(
-      id: doc.data()['id'],
-      username: doc.data()['username'],
+      id: doc.id,
       email: doc.data()['email'],
+      username: doc.data()['username'],
       photoUrl: doc.data()['photoUrl'],
       displayName: doc.data()['displayName'],
       bio: doc.data()['bio'],
     );
   }
 }
+
+

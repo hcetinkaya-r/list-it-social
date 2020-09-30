@@ -1,17 +1,16 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:list_it_social/models/user.dart';
 import 'package:list_it_social/pages/edit_profile.dart';
 import 'package:list_it_social/pages/home.dart';
+
 import 'package:list_it_social/widgets/header.dart';
 import 'package:list_it_social/widgets/post.dart';
 import 'package:list_it_social/widgets/post_tile.dart';
 import 'package:list_it_social/widgets/progress.dart';
+
 
 class Profile extends StatefulWidget {
   final String profileId;
@@ -32,7 +31,6 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-
     getProfilePosts();
   }
 
@@ -48,7 +46,6 @@ class _ProfileState extends State<Profile> {
     setState(() {
       isLoading = false;
       postCount = snapshot.docs.length;
-
       posts = snapshot.docs.map((doc) => Post.fromDocument(doc)).toList();
     });
   }
@@ -79,11 +76,9 @@ class _ProfileState extends State<Profile> {
 
   editProfile() {
     Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    EditProfile(currentUserId: currentUserId)))
-        .then((value) => setState(() {}));
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditProfile(currentUserId: currentUserId)));
   }
 
   Container buildButton({String text, Function function}) {
@@ -119,85 +114,87 @@ class _ProfileState extends State<Profile> {
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
       return buildButton(text: "Edit Profile", function: editProfile);
+    } else {
+      return Text('button');
     }
   }
 
   buildProfileHeader() {
     return FutureBuilder(
-      future: usersRef.doc(widget.profileId).get(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return circularProgress();
-        }
-        User user = User.fromDocument(snapshot.data);
-        return Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    radius: 40.0,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: CachedNetworkImageProvider(user.photoUrl),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            buildCountColumn("posts", postCount),
-                            buildCountColumn("followers", 0),
-                            buildCountColumn("following", 0),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            buildProfileButton(),
-                          ],
-                        ),
-                      ],
+        future: usersRef.doc(widget.profileId).get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return circularProgress();
+          }
+          User user = User.fromDocument(snapshot.data);
+          return Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 40.0,
+                      backgroundColor: Colors.grey,
+                      backgroundImage:
+                          CachedNetworkImageProvider(user.photoUrl),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              buildCountColumn("posts", postCount),
+                              buildCountColumn("followers", 0),
+                              buildCountColumn("following", 0),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              buildProfileButton(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 12.0),
+                  child: Text(
+                    user.username,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
                     ),
                   ),
-                ],
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 12.0),
-                child: Text(
-                  user.username,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    user.displayName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 4.0),
-                child: Text(
-                  user.displayName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 2.0),
+                  child: Text(
+                    user.bio,
                   ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 2.0),
-                child: Text(
-                  user.bio,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              ],
+            ),
+          );
+        });
   }
 
   buildProfilePosts() {
@@ -208,15 +205,16 @@ class _ProfileState extends State<Profile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SvgPicture.asset('assets/images/no_content.svg', height: 260),
+            SvgPicture.asset('assets/images/no_content.svg', height: 260.0),
             Padding(
-              padding: EdgeInsets.only(top: 20),
+              padding: EdgeInsets.only(top: 20.0),
               child: Text(
                 "No Posts",
                 style: TextStyle(
-                    color: Colors.redAccent,
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold),
+                  color: Colors.redAccent,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -229,7 +227,7 @@ class _ProfileState extends State<Profile> {
       });
       return GridView.count(
         crossAxisCount: 3,
-        childAspectRatio: 1,
+        childAspectRatio: 1.0,
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,

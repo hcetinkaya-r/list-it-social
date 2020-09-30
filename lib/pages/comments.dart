@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:list_it_social/pages/home.dart';
 import 'package:list_it_social/widgets/header.dart';
 import 'package:list_it_social/widgets/progress.dart';
+
 import 'package:timeago/timeago.dart' as timeago;
 
 class Comments extends StatefulWidget {
@@ -48,7 +49,6 @@ class CommentsState extends State<Comments> {
           if (!snapshot.hasData) {
             return circularProgress();
           }
-
           List<Comment> comments = [];
           snapshot.data.documents.forEach((doc) {
             comments.add(Comment.fromDocument(doc));
@@ -69,18 +69,17 @@ class CommentsState extends State<Comments> {
     });
     bool isNotPostOwner = postOwnerId != currentUser.id;
     if (isNotPostOwner) {
-      activityFeedRef.doc(postOwnerId).collection("feedItems").add({
+      activityFeedRef.doc(postOwnerId).collection('feedItems').add({
         "type": "comment",
         "commentData": commentController.text,
         "timestamp": timestamp,
         "postId": postId,
-        "useId": currentUser.id,
+        "userId": currentUser.id,
         "username": currentUser.username,
         "userProfileImg": currentUser.photoUrl,
         "mediaUrl": postMediaUrl,
       });
     }
-
     commentController.clear();
   }
 
@@ -139,13 +138,7 @@ class Comment extends StatelessWidget {
     return Column(
       children: <Widget>[
         ListTile(
-          title: Text(
-            comment,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
+          title: Text(comment),
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(avatarUrl),
           ),

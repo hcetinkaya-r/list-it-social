@@ -32,19 +32,18 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
     pageController = PageController();
-
+    // Detects when user signed in
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account);
     }, onError: (err) {
-      print('Error signing in!: $err');
+      print('Error signing in: $err');
     });
-
+    // Reauthenticate user when app is opened
     googleSignIn.signInSilently(suppressErrors: false).then((account) {
       handleSignIn(account);
     }).catchError((err) {
-      print('Error sign in: $err');
+      print('Error signing in: $err');
     });
   }
 
@@ -61,17 +60,17 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void createUserInFirestore() async {
-    // 1)check if user exists in users collection in database (according id)
+  createUserInFirestore() async {
+    // 1) check if user exists in users collection in database (according to their id)
     final GoogleSignInAccount user = googleSignIn.currentUser;
     DocumentSnapshot doc = await usersRef.doc(user.id).get();
+
     if (!doc.exists) {
-      // 2)if the user doesn't exist, then we want to take them to the create account page
+      // 2) if the user doesn't exist, then we want to take them to the create account page
       final username = await Navigator.push(
           context, MaterialPageRoute(builder: (context) => CreateAccount()));
 
-      // 3)get username from create account, use it to make new user document in users collection
-
+      // 3) get username from create account, use it to make new user document in users collection
       usersRef.doc(user.id).set({
         "id": user.id,
         "username": username,
@@ -79,10 +78,12 @@ class _HomeState extends State<Home> {
         "email": user.email,
         "displayName": user.displayName,
         "bio": "",
-        "timestamp": timestamp,
+        "timestamp": timestamp
       });
+
       doc = await usersRef.doc(user.id).get();
     }
+
     currentUser = User.fromDocument(doc);
   }
 
@@ -109,7 +110,7 @@ class _HomeState extends State<Home> {
   onTap(int pageIndex) {
     pageController.animateToPage(
       pageIndex,
-      duration: Duration(milliseconds: 200),
+      duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
   }
@@ -118,12 +119,11 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          //Timeline(),
+          // Timeline(),
           RaisedButton(
             child: Text('Logout'),
             onPressed: logout,
           ),
-
           ActivityFeed(),
           Upload(currentUser: currentUser),
           Search(),
@@ -134,22 +134,26 @@ class _HomeState extends State<Home> {
         physics: NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: CupertinoTabBar(
-        currentIndex: pageIndex,
-        onTap: onTap,
-        activeColor: Theme.of(context).primaryColor,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.whatshot)),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications_active)),
-          BottomNavigationBarItem(icon: Icon(Icons.photo_camera, size: 35)),
-          BottomNavigationBarItem(icon: Icon(Icons.search)),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle)),
-        ],
-      ),
+          currentIndex: pageIndex,
+          onTap: onTap,
+          activeColor: Theme.of(context).primaryColor,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.whatshot)),
+            BottomNavigationBarItem(icon: Icon(Icons.notifications_active)),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.photo_camera,
+                size: 35.0,
+              ),
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.search)),
+            BottomNavigationBarItem(icon: Icon(Icons.account_circle)),
+          ]),
     );
-    //return RaisedButton(
-    //child: Text('Logout'),
-    //onPressed: logout,
-    //);
+    // return RaisedButton(
+    //   child: Text('Logout'),
+    //   onPressed: logout,
+    // );
   }
 
   Scaffold buildUnAuthScreen() {
@@ -160,8 +164,8 @@ class _HomeState extends State<Home> {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Theme.of(context).primaryColor,
               Theme.of(context).accentColor,
+              Theme.of(context).primaryColor,
             ],
           ),
         ),
@@ -171,26 +175,28 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              "List-it Social",
+              'FlutterShare',
               style: TextStyle(
                 fontFamily: "Signatra",
-                fontSize: 90,
+                fontSize: 90.0,
                 color: Colors.white,
               ),
             ),
             GestureDetector(
               onTap: login,
               child: Container(
-                width: 260,
-                height: 60,
+                width: 260.0,
+                height: 60.0,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/google_signin_button.png'),
+                    image: AssetImage(
+                      'assets/images/google_signin_button.png',
+                    ),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
