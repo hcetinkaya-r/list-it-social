@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,11 +8,14 @@ import 'package:list_it_social/pages/activity_feed.dart';
 import 'package:list_it_social/pages/create_account.dart';
 import 'package:list_it_social/pages/profile.dart';
 import 'package:list_it_social/pages/search.dart';
-
 import 'package:list_it_social/pages/upload.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
+final StorageReference storageRef = FirebaseStorage.instance.ref();
 final usersRef = FirebaseFirestore.instance.collection('users');
+final postsRef = FirebaseFirestore.instance.collection('posts');
+final commentsRef = FirebaseFirestore.instance.collection('comments');
+final activityFeedRef = FirebaseFirestore.instance.collection('feed');
 final DateTime timestamp = DateTime.now();
 User currentUser;
 
@@ -80,8 +84,6 @@ class _HomeState extends State<Home> {
       doc = await usersRef.doc(user.id).get();
     }
     currentUser = User.fromDocument(doc);
-    print(currentUser);
-    print(currentUser.username);
   }
 
   @override
@@ -118,13 +120,14 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           //Timeline(),
           RaisedButton(
-          child: Text('Logout'),
-          onPressed: logout,),
+            child: Text('Logout'),
+            onPressed: logout,
+          ),
 
           ActivityFeed(),
           Upload(currentUser: currentUser),
           Search(),
-          Profile(),
+          Profile(profileId: currentUser?.id),
         ],
         controller: pageController,
         onPageChanged: onPageChanged,
